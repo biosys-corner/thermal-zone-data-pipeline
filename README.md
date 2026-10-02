@@ -10,8 +10,8 @@ El sistema está compuesto por **5 zonas térmicas independientes**, lo que perm
 
 El pipeline consta de dos etapas principales:
 
-1. **Adquisición Serial (`capturar_datos.py`):** Escucha las tramas de datos emitidas por un microcontrolador ESP32 mediante comunicación USB-Serial y las estructura dinámicamente en archivos `.csv` con marcas de tiempo.
-2. **Análisis de Estabilidad (`analizar_estabilidad_v6.py`):** Procesa los registros `.csv`, evalúa el tiempo necesario para alcanzar y mantener la estabilidad térmica en cada zona dentro de rangos de tolerancia específicos (±0.5°C), realiza pruebas de varianza estadística (**ANOVA**) entre los canales independientes y genera gráficos generales y por zona de calidad de publicación.
+1. **Adquisición Serial (`scripts/capturar_datos.py`):** Escucha las tramas de datos emitidas por un microcontrolador ESP32 mediante comunicación USB-Serial y las estructura dinámicamente en archivos `.csv` dentro de la carpeta `data/`con marcas de tiempo.
+2. **Análisis de Estabilidad (`scripts/analizar_estabilidad_v6.py`):** Procesa los registros `.csv`, evalúa el tiempo necesario para alcanzar y mantener la estabilidad térmica en cada zona dentro de rangos de tolerancia específicos (±0.5°C), realiza pruebas de varianza estadística (**ANOVA**) entre los canales independientes y genera gráficos generales y por zona en la carpeta `outputs/`.
 
 > **Nota sobre el Hardware:** El script de captura está adaptado a la estructura de tramas emitida por el firmware del prototipo. El script de análisis estadístico es modular y compatible con cualquier archivo CSV que mantenga una estructura similar de registros de temperatura por canal y timestamp.
 
@@ -24,12 +24,22 @@ thermal-zone-data-pipeline/
 ├── README.md                  # Documentación del proyecto
 ├── requirements.txt           # Dependencias de Python
 ├── .gitignore                 # Archivos excluidos del control de versiones
+├── assets/
+│   └── console_output.png     # Captura de pantalla de la ejecución en consola
 ├── data/
-│   └── raw_sample.csv         # Datos de prueba sintéticos/anonimizados
+│   └── raw_sample.csv         # Registro experimental de prueba (24h)
+├── outputs/
+│   └── .gitkeep               # Carpeta de destino para gráficos generados
 └── scripts/
     ├── capturar_datos.py      # Captura de datos por puerto serial
     └── analizar_estabilidad_v6.py # Procesamiento de datos y gráficos
 ```
+
+Demostración de Salida (CLI)
+
+Ejemplo del reporte de análisis térmico y prueba ANOVA generado directamente en la consola al procesar el archivo de prueba data/raw_sample.csv:
+
+![Demostración de la consola](./assets/console.output.png)
 
 Tecnologías y Librerías
 
@@ -37,7 +47,7 @@ Tecnologías y Librerías
 
     PySerial: Comunicación con microcontroladores vía puerto serie.
 
-    Pandas & NumPy: Manipulación, filtrado y cálculo de series de tiempo.
+    Pandas y NumPy: Manipulación, filtrado y cálculo de series de tiempo.
 
     SciPy: Evaluación estadística e inferencia mediante pruebas ANOVA (One-way ANOVA).
 
@@ -49,14 +59,14 @@ Tecnologías y Librerías
 
 Puedes instalar los requisitos usando el gestor de paquetes de tu distribución Linux o mediante un entorno virtual de Python (venv).
 
-Debian / Ubuntu / Devuan (apt):
+Basados en Debian / Ubuntu  (apt):
 
 ```pruebas
 sudo apt update
 sudo apt install python3-pandas python3-matplotlib python3-scipy python3-numpy python3-serial
 ```
 
-Arch Linux / CachyOS (pacman):
+Basados en Arch Linux (pacman):
 
 ```Bash
 sudo pacman -S python-pandas python-matplotlib python-scipy python-numpy python-pyserial
@@ -96,8 +106,9 @@ Para procesar un dataset existente y generar los gráficos de estabilidad térmi
 python3 scripts/analizar_estabilidad_v6.py
 ```
 
-Los gráficos de salida se guardarán automáticamente en formato PNG.
- Resultados del Análisis
+Los gráficos de salida se guardarán automáticamente en la carpeta `outputs/`.
+
+Resultados del Análisis
 
 El módulo de análisis calcula automáticamente:
 

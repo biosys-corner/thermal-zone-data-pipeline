@@ -3,9 +3,28 @@ import matplotlib.pyplot as plt
 from scipy import stats
 import numpy as np
 from matplotlib.patches import Patch
+from pathlib import Path
+
+# --- RUTAS DINÁMICAS (Multiplataforma y seguras) ---
+# __file__ es este script (scripts/analizar_estabilidad_v6.py)
+# .parent es la carpeta 'scripts'
+# .parent.parent es la raíz del proyecto ('thermal-zone-data-pipeline')
+SCRIPT_DIR = Path(__file__).resolve().parent
+BASE_DIR = SCRIPT_DIR.parent
+
+# Carpetas de datos y salidas relativas a la raíz
+DATA_DIR = BASE_DIR / "data"
+OUTPUT_DIR = BASE_DIR / "outputs"
+
+# Crear la carpeta outputs si no existe
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
 
 # Configuración del analisis
-CSV_FILENAME = ""  # Dentro de las comillas debe ir el nombre del .csv a analizar
+# Archivo de entrada
+CSV_FILENAME = (
+    DATA_DIR / "raw_sample.csv"
+)  # Dentro de las comillas debe ir el nombre del .csv a analizar
 SETPOINTS_C = [
     10.0,
     20.0,
@@ -203,7 +222,7 @@ ax.grid(True, which="both", linestyle="--", linewidth=0.5)
 fig.tight_layout(rect=[0, 0, 0.9, 1])
 
 # Guardar el gráfico
-plot_filename = f"{CSV_FILENAME.replace('.csv', '')}_plot.png"
+plot_filename = OUTPUT_DIR / f"{CSV_FILENAME.stem}_plot.png"
 plt.savefig(plot_filename, dpi=300, bbox_inches="tight")
 print(f"Gráfico guardado como '{plot_filename}'")
 plt.show()
@@ -260,7 +279,7 @@ for i in range(5):
 
     ax_ind.legend()
     ax_ind.grid(True, which="both", linestyle="--", linewidth=0.5)
-    plot_ind_filename = f"{CSV_FILENAME.replace('.csv', '')}_plot_Peltier_{i + 1}.png"
+    plot_ind_filename = OUTPUT_DIR / f"{CSV_FILENAME.stem}_plot_Peltier_{i + 1}.png"
     plt.savefig(plot_ind_filename, dpi=300, bbox_inches="tight")
     plt.close(fig_ind)
     print(f"Gráfico individual guardado como '{plot_ind_filename}'")

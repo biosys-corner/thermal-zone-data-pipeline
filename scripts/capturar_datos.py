@@ -1,5 +1,14 @@
 import serial
 import datetime
+from pathlib import Path
+
+# --- RUTAS DINÁMICAS ---
+SCRIPT_DIR = Path(__file__).resolve().parent
+BASE_DIR = SCRIPT_DIR.parent
+DATA_DIR = BASE_DIR / "data"
+
+# Crear la carpeta data si no existe
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 # Configuración
 # Encuentra el puerto correcto. Conecta el ESP32 y ejecuta en la terminal: dmesg | grep tty
@@ -28,7 +37,7 @@ try:
                 is_logging = True
                 # Crea un nombre de archivo único con la fecha y hora actual
                 timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-                filename = f"estabilidad_test_{timestamp}.csv"
+                filename = DATA_DIR / f"estabilidad_test_{timestamp}.csv"
                 csv_file = open(filename, "w", newline="")
                 # Escribe la cabecera del CSV
                 csv_file.write(
